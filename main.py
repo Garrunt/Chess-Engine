@@ -6,11 +6,11 @@ WIDTH, HEIGHT = 640, 640
 ROWS, COLS = 8, 8
 SQ_SIZE = WIDTH // COLS
 
-# Setup Pygame
-pygame.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Chess GUI with Logic")
-board = chess.Board()
+# Unicode mapping for chess pieces
+UNICODE_PIECES = {
+    'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔',
+    'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚'
+}
 
 def get_square_from_mouse(pos):
     """Converts pixel coordinates to a chess square (e.g., 'e2')"""
@@ -18,24 +18,35 @@ def get_square_from_mouse(pos):
     row = 7 - (pos[1] // SQ_SIZE)
     return chess.square(col, row)
 
-def draw_board():
+def draw_board(screen):
+    """Draws the 8x8 checkerboard."""
     for r in range(ROWS):
         for c in range(COLS):
-            color = pygame.Color("white") if (r + c) % 2 == 0 else pygame.Color("gray")
+            color = pygame.Color("#eeeed2") if (r + c) % 2 == 0 else pygame.Color("#769656")
             pygame.draw.rect(screen, color, pygame.Rect(c * SQ_SIZE, (7 - r) * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
-def draw_pieces():
+def draw_pieces(screen, board, font):
+    """Draws the Unicode pieces onto the board."""
     for square in chess.SQUARES:
         piece = board.piece_at(square)
         if piece:
-            # We use text as placeholders. Replace with pygame.image.load() later
-            font = pygame.font.SysFont("Arial", 40, bold=True)
-            text = font.render(piece.symbol(), True, pygame.Color("black"))
+            symbol = UNICODE_PIECES[piece.symbol()]
+            # Set color based on piece team
+            text_color = pygame.Color("white") if piece.color == chess.WHITE else pygame.Color("black")
+            text = font.render(symbol, True, text_color)
+            
+            # Center text in square
             col = chess.square_file(square)
             row = chess.square_rank(square)
-            screen.blit(text, (col * SQ_SIZE + 20, (7 - row) * SQ_SIZE + 10))
+            screen.blit(text, (col * SQ_SIZE + 10, (7 - row) * SQ_SIZE - 5))
 
 def main():
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Chess GUI with Logic")
+    font = pygame.font.SysFont("Arial", 75)
+    
+    board = chess.Board()
     running = True
     selected_square = None
 
@@ -61,8 +72,8 @@ def main():
                     selected_square = None
 
         screen.fill(pygame.Color("white"))
-        draw_board()
-        draw_pieces()
+        draw_board(screen)
+        draw_pieces(screen, board, font)
         pygame.display.flip()
 
     pygame.quit()

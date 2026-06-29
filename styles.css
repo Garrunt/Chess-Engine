@@ -1,0 +1,34 @@
+/* Container for the piece inside your square */
+.piece {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 4rem; /* Scales with the container size */
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s;
+}
+.piece {
+  color: #000;
+}
+/* Color definitions */
+.white-piece {
+    color: #ffffff;
+    text-shadow: 0 0 2px #000;
+}
+.black-piece {
+    color: #000000;
+}
+
+.piece:contains("♔"), 
+.white-piece {
+  color: #fff;
+  text-shadow: 0 0 3px #000; 
+}
+
+.piece:hover {
+  transform: scale(1.1);
+}
+
